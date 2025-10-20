@@ -1,0 +1,12 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Controllers",
+    "\\Data\\Seed",
+    "\\Domain\\Entities",
+    "\\Dtos\\Auth",
+    "\\Services"
+  ],
+  "SelectedNode": "\\Controllers\\SymptomsController.cs",
+  "PreviewInSolutionExplorer": false
+}
