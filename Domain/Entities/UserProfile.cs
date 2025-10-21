@@ -5,7 +5,7 @@ using System;
 public class UserProfile
 {
     public int Id { get; set; }
-    public Guid userId { get; set; }
+    public Guid UserId { get; set; }
     public string? Gender { get; set; }
     public bool HasDiabetes { get; set; }
     public bool HasHypertension { get; set; }

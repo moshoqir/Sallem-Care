@@ -170,3 +170,4 @@ C:\Users\shoqi\Desktop\Saleem project\SaleemCare.Api\obj\Debug\net9.0\SaleemCare
 C:\Users\shoqi\Desktop\Saleem project\SaleemCare.Api\obj\Debug\net9.0\SaleemCare.Api.genruntimeconfig.cache
 C:\Users\shoqi\Desktop\Saleem project\SaleemCare.Api\obj\Debug\net9.0\ref\SaleemCare.Api.dll
 C:\Users\shoqi\Desktop\Saleem project\SaleemCare.Api\bin\Debug\net9.0\BCrypt.Net-Next.dll
+C:\Users\shoqi\Desktop\Saleem project\SaleemCare.Api\obj\Debug\net9.0\SaleemCare.Api.sourcelink.json

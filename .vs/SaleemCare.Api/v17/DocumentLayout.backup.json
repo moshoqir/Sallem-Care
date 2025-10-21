@@ -3,28 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Controllers\\AuthController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Controllers\\AuthController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Controllers\\SymptomsController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Controllers\\SymptomsController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Controllers\\RegionsController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Controllers\\RegionsController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Dtos\\Auth\\RegisterDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Dtos\\Auth\\RegisterDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Domain\\Entities\\SymptomQuestion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Domain\\Entities\\SymptomQuestion.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Domain\\Entities\\Symptom.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Domain\\Entities\\Symptom.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Data\\Seed\\DbInitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Data\\Seed\\DbInitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Dtos\\Auth\\LoginDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Dtos\\Auth\\LoginDto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,83 +26,59 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "SymptomsController.cs",
               "DocumentMoniker": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Controllers\\SymptomsController.cs",
               "RelativeDocumentMoniker": "Controllers\\SymptomsController.cs",
               "ToolTip": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Controllers\\SymptomsController.cs",
               "RelativeToolTip": "Controllers\\SymptomsController.cs",
-              "ViewState": "AgIAAAkAAAAAMzMzMzMbwBMAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAD8AAAAAZmZmZmYkwEwAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-15T17:45:46.552Z",
+              "WhenOpened": "2025-10-18T17:42:55.783Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "RegionsController.cs",
-              "DocumentMoniker": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Controllers\\RegionsController.cs",
-              "RelativeDocumentMoniker": "Controllers\\RegionsController.cs",
-              "ToolTip": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Controllers\\RegionsController.cs",
-              "RelativeToolTip": "Controllers\\RegionsController.cs",
-              "ViewState": "AgIAAAQAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
+              "ToolTip": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "Controllers\\AuthController.cs",
+              "ViewState": "AgIAACcAAAAAAAAAAABQvQsAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-13T20:59:33.765Z",
+              "WhenOpened": "2025-10-18T17:22:24.596Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "Symptom.cs",
-              "DocumentMoniker": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Domain\\Entities\\Symptom.cs",
-              "RelativeDocumentMoniker": "Domain\\Entities\\Symptom.cs",
-              "ToolTip": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Domain\\Entities\\Symptom.cs",
-              "RelativeToolTip": "Domain\\Entities\\Symptom.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Title": "LoginDto.cs",
+              "DocumentMoniker": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Dtos\\Auth\\LoginDto.cs",
+              "RelativeDocumentMoniker": "Dtos\\Auth\\LoginDto.cs",
+              "ToolTip": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Dtos\\Auth\\LoginDto.cs",
+              "RelativeToolTip": "Dtos\\Auth\\LoginDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-15T18:56:03.525Z",
+              "WhenOpened": "2025-10-18T17:19:43.346Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "SymptomQuestion.cs",
-              "DocumentMoniker": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Domain\\Entities\\SymptomQuestion.cs",
-              "RelativeDocumentMoniker": "Domain\\Entities\\SymptomQuestion.cs",
-              "ToolTip": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Domain\\Entities\\SymptomQuestion.cs",
-              "RelativeToolTip": "Domain\\Entities\\SymptomQuestion.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAjAAAAAAAAAA==",
+              "Title": "RegisterDto.cs",
+              "DocumentMoniker": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Dtos\\Auth\\RegisterDto.cs",
+              "RelativeDocumentMoniker": "Dtos\\Auth\\RegisterDto.cs",
+              "ToolTip": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Dtos\\Auth\\RegisterDto.cs",
+              "RelativeToolTip": "Dtos\\Auth\\RegisterDto.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAA4AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-15T18:19:03.074Z",
+              "WhenOpened": "2025-10-18T17:18:07.702Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "DbInitializer.cs",
-              "DocumentMoniker": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Data\\Seed\\DbInitializer.cs",
-              "RelativeDocumentMoniker": "Data\\Seed\\DbInitializer.cs",
-              "ToolTip": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Data\\Seed\\DbInitializer.cs",
-              "RelativeToolTip": "Data\\Seed\\DbInitializer.cs",
-              "ViewState": "AgIAAFQAAACAMzMzMzMpwGgAAAARAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-13T20:02:26.687Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\shoqi\\Desktop\\Saleem project\\SaleemCare.Api\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAB8AAAAAzczMzMwUwC0AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-10-13T18:55:23.458Z"
             }
           ]
         }

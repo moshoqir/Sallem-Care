@@ -3,10 +3,12 @@
     "",
     "\\Controllers",
     "\\Data\\Seed",
+    "\\Domain",
     "\\Domain\\Entities",
-    "\\Dtos\\Auth",
-    "\\Services"
+    "\\Dtos\\Profile",
+    "\\Mapping",
+    "\\Validation"
   ],
-  "SelectedNode": "\\Controllers\\SymptomsController.cs",
+  "SelectedNode": "\\Controllers\\RegionsController.cs",
   "PreviewInSolutionExplorer": false
 }
