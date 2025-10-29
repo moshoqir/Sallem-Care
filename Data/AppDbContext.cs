@@ -14,6 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
     public DbSet<UserSymptomAnswer> UserSymptomAnswers => Set<UserSymptomAnswer>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<Encounter> Encounters => Set<Encounter>();
 
 
 
@@ -27,7 +28,22 @@ public class AppDbContext : DbContext
            .HasIndex(x => new { x.RegionId, x.SymptomId })
               .IsUnique();
 
+        b.Entity<Encounter>().HasIndex(x => new { x.UserId, x.StartedAt });
+
+        b.Entity<UserSymptomAnswer>(e =>
+        {
+            e.HasIndex(x => new { x.UserId, x.SymptomId, x.SymptomQuestionId });
+
+           
+            e.HasOne(x => x.Encounter)
+             .WithMany()
+             .HasForeignKey(x => x.EncounterId)
+             .OnDelete(DeleteBehavior.SetNull);
+
+        });
+
         base.OnModelCreating(b);
+
 
     }
 

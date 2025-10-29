@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using SaleemCare.Api.Extensions;
+using System;
 
 namespace SaleemCare.Api.Controllers;
 
@@ -61,20 +62,7 @@ public class AuthController : ControllerBase
         return Ok(new { token, user = new { user.Id, user.Name, user.Email } });
     }
 
-    [Authorize]
-    [HttpGet("me")]
+    
 
-    public async Task<IActionResult> Me()
-    {
-        var userId = User.GetUserId();
-
-        var user = await _db.Users.AsNoTracking()
-            .Where(u => u.Id == userId)
-            .Select(u => new { u.Id, u.Name, u.Email, u.CreatedAt })
-            .FirstOrDefaultAsync();
-
-        if (user is null) return NotFound(new { error = new { message = "User not found." } });
-        return Ok(user);
-
-    }
+   
 }

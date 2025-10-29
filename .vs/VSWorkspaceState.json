@@ -2,13 +2,14 @@
   "ExpandedNodes": [
     "",
     "\\Controllers",
+    "\\Data",
     "\\Data\\Seed",
     "\\Domain",
     "\\Domain\\Entities",
-    "\\Dtos\\Profile",
+    "\\Dtos",
     "\\Mapping",
     "\\Validation"
   ],
-  "SelectedNode": "\\Controllers\\RegionsController.cs",
+  "SelectedNode": "\\Data\\Seed\\DbInitializer.cs",
   "PreviewInSolutionExplorer": false
 }

@@ -61,7 +61,7 @@ public class SymptomsController : ControllerBase
 
     // POST /v1/symptoms/{id}/answers
     public record AnswerQuestion(int QuestionId, string Answer);
-    public record SaveAnswersDto(List<AnswerQuestion> Answers);
+    public record SaveAnswersDto(Guid? EncounterId, List<AnswerQuestion> Answers);
 
     [Authorize]
     [HttpPost("{id:int}/answers")]
@@ -75,6 +75,13 @@ public class SymptomsController : ControllerBase
 
         //// temp UserId
         var userId = GetUserId();
+
+        // If encounterId is provided, ensure it belongs to the current user
+        if (dto.EncounterId is Guid encId)
+        {
+            var ok = await _db.Encounters.AnyAsync(e => e.Id == encId && e.UserId == userId);
+            if (!ok) return BadRequest(new { error = new { message = "Invalid encounterId." } });
+        }
 
         // store answers (for each since it'll be several)
 
@@ -103,12 +110,14 @@ public class SymptomsController : ControllerBase
                     SymptomId = id,
                     SymptomQuestionId = answer.QuestionId,
                     AnswerJson = json,
+                    EncounterId = dto.EncounterId
 
                 });
             }
             else
             {
                 existing.AnswerJson = json;
+                existing.EncounterId = dto.EncounterId;
             }
         }
 
