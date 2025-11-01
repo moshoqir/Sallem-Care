@@ -4,12 +4,12 @@
     "\\Controllers",
     "\\Data",
     "\\Data\\Seed",
-    "\\Domain",
     "\\Domain\\Entities",
     "\\Dtos",
+    "\\Dtos\\Auth",
     "\\Mapping",
     "\\Validation"
   ],
-  "SelectedNode": "\\Data\\Seed\\DbInitializer.cs",
+  "SelectedNode": "\\Controllers\\AuthController.cs",
   "PreviewInSolutionExplorer": false
 }

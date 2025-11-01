@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using SaleemCare.Api.Extensions;
 using System;
+using SaleemCare.Api.Dtos.Auth;
 
 namespace SaleemCare.Api.Controllers;
 
@@ -62,7 +63,52 @@ public class AuthController : ControllerBase
         return Ok(new { token, user = new { user.Id, user.Name, user.Email } });
     }
 
-    
 
-   
+
+    [Authorize]
+    [HttpPost("change-password")]
+    public async Task<IActionResult> changePassword([FromBody] ChangePasswordDto dto)
+    {
+        if (string.IsNullOrWhiteSpace(dto.CurrentPassword) || string.IsNullOrWhiteSpace(dto.NewPassword))
+        {
+            return BadRequest(new { error = new { message = "Both currentPassword and newPassword are required." } });
+        }
+
+        if (dto.NewPassword.Length < 8)
+            return BadRequest(new { error = new { message = "New password must be at least 8 characters." } });
+
+
+
+        var userId = User.GetUserId();
+
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user is null) return Unauthorized();
+
+        var ok = BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.PasswordHash);
+
+        if (!ok) return Unauthorized(new { error = new { message = "Current password is incorrect." } });
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Password changed successfully." });
+
+
+    }
+
+    [Authorize]
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh()
+    {
+        var userId = User.GetUserId();
+
+        var user = await _db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user is null) return Unauthorized();
+
+        var token = _tokens.Create(user); 
+        return Ok(new { token });
+    }
 }
