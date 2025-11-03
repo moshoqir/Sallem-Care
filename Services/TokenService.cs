@@ -4,13 +4,15 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SaleemCare.Api.Domain.Entities;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 public class TokenService : ITokenService
 {
     private readonly IConfiguration _cfg;
     public TokenService(IConfiguration cfg) => _cfg = cfg;
 
-    public string Create(User user, TimeSpan? lifetime = null)
+    public string Create(User user, IEnumerable<string> roles, TimeSpan? lifetime = null)
     {
         //read from appsettings confg
         var jwt = _cfg.GetSection("Jwt");
@@ -23,7 +25,7 @@ public class TokenService : ITokenService
 
 
         // Claim is to help APIs to understand who the user is by their info (userId, Email, Name, etc.)
-        var claims = new[]
+        var claims = new List<Claim>
         {
             // claim to represent userId
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
@@ -31,6 +33,10 @@ public class TokenService : ITokenService
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim("name", user.Name)
         };
+
+        // add role claims
+        claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
+
 
         var token = new JwtSecurityToken(
             issuer: jwt["Issuer"],

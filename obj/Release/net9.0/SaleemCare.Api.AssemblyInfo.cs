@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SaleemCare.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c2f4355570ae45413f8371d8dd6089dcef4bda81")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+477456c7fada39f33e7c0881433bbb5db40b15ae")]
 [assembly: System.Reflection.AssemblyProductAttribute("SaleemCare.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SaleemCare.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -10,6 +10,7 @@ using System.Security.Claims;
 using SaleemCare.Api.Extensions;
 using System;
 using SaleemCare.Api.Dtos.Auth;
+using System.Collections.Generic;
 
 namespace SaleemCare.Api.Controllers;
 
@@ -45,7 +46,8 @@ public class AuthController : ControllerBase
         _db.Users.Add(user);
         await _db.SaveChangesAsync();
 
-        var token = _tokens.Create(user);
+        var roles = await GetRoleNamesAsync(user.Id);
+        var token = _tokens.Create(user, roles);
 
         return StatusCode(201, new { token, user = new { user.Id, user.Name, user.Email } });
     }
@@ -59,7 +61,8 @@ public class AuthController : ControllerBase
         { return Unauthorized(new { error = new { message = "Invalid credentials." } });
         }
 
-        var token = _tokens.Create(user);
+        var roles = await GetRoleNamesAsync(user.Id);
+        var token = _tokens.Create(user, roles);
         return Ok(new { token, user = new { user.Id, user.Name, user.Email } });
     }
 
@@ -108,7 +111,16 @@ public class AuthController : ControllerBase
 
         if (user is null) return Unauthorized();
 
-        var token = _tokens.Create(user); 
+        var roles = await GetRoleNamesAsync(user.Id);
+        var token = _tokens.Create(user,roles); 
         return Ok(new { token });
+    }
+
+    private async Task<List<string>> GetRoleNamesAsync(Guid userId)
+    {
+        return await _db.UserRoles
+            .Where(ur => ur.UserId == userId)
+            .Select(q => q.Role!.Name)
+            .ToListAsync();
     }
 }
