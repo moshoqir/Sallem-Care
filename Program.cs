@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SaleemCare.Api.Data;
 using SaleemCare.Api.Data.Seed;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -73,9 +74,26 @@ using (var scope = app.Services.CreateScope())
     await DbInitializer.SeedAsync(db);
 }
 
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+
+// SPA middleware for development - automatically starts React dev server
+if (app.Environment.IsDevelopment())
+{
+    app.UseSpa(spa =>
+    {
+        spa.Options.SourcePath = "clientapp";
+        spa.UseReactDevelopmentServer(npmScript: "start");
+    });
+}
+
 app.UseCors("flutter");
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// This tells .NET to serve React build files in production
+app.MapFallbackToFile("index.html");
+
 app.Run();
