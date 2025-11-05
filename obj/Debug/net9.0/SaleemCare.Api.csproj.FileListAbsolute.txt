@@ -345,8 +345,6 @@ C:/Users/shoqi/Desktop/Saleem project/SaleemCare.Api/obj/Debug/net9.0/SaleemCare
 /Users/esraa/Desktop/excelent/Sallem-Care/obj/Debug/net9.0/SaleemCare.Api.pdb
 /Users/esraa/Desktop/excelent/Sallem-Care/obj/Debug/net9.0/SaleemCare.Api.genruntimeconfig.cache
 /Users/esraa/Desktop/excelent/Sallem-Care/obj/Debug/net9.0/ref/SaleemCare.Api.dll
-/Users/esraa/Desktop/excelent/Sallem-Care/bin/Debug/net9.0/clientapp/build/asset-manifest.json
-/Users/esraa/Desktop/excelent/Sallem-Care/bin/Debug/net9.0/clientapp/build/manifest.json
 /Users/esraa/Desktop/excelent/Sallem-Care/bin/Debug/net9.0/clientapp/package-lock.json
 /Users/esraa/Desktop/excelent/Sallem-Care/bin/Debug/net9.0/clientapp/package.json
 /Users/esraa/Desktop/excelent/Sallem-Care/bin/Debug/net9.0/clientapp/public/manifest.json
@@ -354,11 +352,6 @@ C:/Users/shoqi/Desktop/Saleem project/SaleemCare.Api/obj/Debug/net9.0/SaleemCare
 /Users/esraa/Desktop/excelent/Sallem-Care/bin/Debug/net9.0/Microsoft.Extensions.FileProviders.Abstractions.dll
 /Users/esraa/Desktop/excelent/Sallem-Care/bin/Debug/net9.0/Microsoft.Extensions.FileProviders.Physical.dll
 /Users/esraa/Desktop/excelent/Sallem-Care/bin/Debug/net9.0/Microsoft.Extensions.FileSystemGlobbing.dll
-/Users/esraa/Desktop/excelent/Sallem-Care/bin/Debug/net9.0/clientapp/clientapp/package-lock.json
-/Users/esraa/Desktop/excelent/Sallem-Care/bin/Debug/net9.0/clientapp/clientapp/package.json
-/Users/esraa/Desktop/excelent/Sallem-Care/bin/Debug/net9.0/clientapp/clientapp/tsconfig.app.json
-/Users/esraa/Desktop/excelent/Sallem-Care/bin/Debug/net9.0/clientapp/clientapp/tsconfig.json
-/Users/esraa/Desktop/excelent/Sallem-Care/bin/Debug/net9.0/clientapp/clientapp/tsconfig.node.json
 /Users/esraa/Desktop/excelent/Sallem-Care/bin/Debug/net9.0/clientapp/tsconfig.json
 /Users/esraa/Desktop/excelent/Sallem-Care/bin/Debug/net9.0/clientapp/components.json
 /Users/esraa/Desktop/excelent/Sallem-Care/bin/Debug/net9.0/clientapp/tsconfig.app.json
