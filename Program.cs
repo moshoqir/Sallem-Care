@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using SaleemCare.Api.Data;
 using SaleemCare.Api.Data.Seed;
 using FluentValidation.AspNetCore;
+using SaleemCare.Api.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,6 +31,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
+
+// AI servicse
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<GoogleAiService>();
 
 var jwt = builder.Configuration.GetSection("Jwt");
 
