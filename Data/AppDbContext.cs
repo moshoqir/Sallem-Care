@@ -16,6 +16,11 @@ public class AppDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<Encounter> Encounters => Set<Encounter>();
 
+    public DbSet<Condition> Conditions => Set<Condition>();
+    public DbSet<SymptomConditionMap> SymptomConditionMap => Set<SymptomConditionMap>();
+    public DbSet<ConditionRule> ConditionRules => Set<ConditionRule>();
+    public DbSet<ExcelImport> ExcelImports => Set<ExcelImport>();
+
 
 
     protected override void OnModelCreating(ModelBuilder b)
@@ -41,6 +46,25 @@ public class AppDbContext : DbContext
              .OnDelete(DeleteBehavior.SetNull);
 
         });
+
+        b.Entity<Condition>().HasIndex(x => x.Slug).IsUnique();
+
+        b.Entity<SymptomConditionMap>()
+            .HasOne(x => x.Symptom)
+            .WithMany()
+            .HasForeignKey(x => x.SymptomId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        b.Entity<SymptomConditionMap>()
+            .HasOne(x => x.Condition)
+            .WithMany()
+            .HasForeignKey(x => x.ConditionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        b.Entity<SymptomConditionMap>()
+        .HasIndex(m => new { m.SymptomId, m.ConditionId })
+        .IsUnique();
+
 
         base.OnModelCreating(b);
 
