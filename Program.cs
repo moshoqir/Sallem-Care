@@ -7,6 +7,7 @@ using SaleemCare.Api.Data;
 using SaleemCare.Api.Data.Seed;
 using FluentValidation.AspNetCore;
 using SaleemCare.Api.Services;
+using SaleemCare.Api.Services.Excel;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,6 +36,9 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 // AI servicse
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<GoogleAiService>();
+
+// Excel Service
+builder.Services.AddScoped<ExcelImportService>();
 
 var jwt = builder.Configuration.GetSection("Jwt");
 
