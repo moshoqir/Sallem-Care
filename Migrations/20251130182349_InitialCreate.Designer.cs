@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SaleemCare.Api.Data;
 
@@ -11,13 +12,15 @@ using SaleemCare.Api.Data;
 namespace SaleemCare.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251130182349_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.11")
+                .HasAnnotation("ProductVersion", "9.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -182,26 +185,6 @@ namespace SaleemCare.Api.Migrations
                     b.ToTable("RegionSymptoms");
                 });
 
-            modelBuilder.Entity("SaleemCare.Api.Domain.Entities.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Roles");
-                });
-
             modelBuilder.Entity("SaleemCare.Api.Domain.Entities.Symptom", b =>
                 {
                     b.Property<int>("Id")
@@ -354,21 +337,6 @@ namespace SaleemCare.Api.Migrations
                     b.ToTable("UserProfiles");
                 });
 
-            modelBuilder.Entity("SaleemCare.Api.Domain.Entities.UserRole", b =>
-                {
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("UserRoles");
-                });
-
             modelBuilder.Entity("SaleemCare.Api.Domain.Entities.UserSymptomAnswer", b =>
                 {
                     b.Property<int>("Id")
@@ -463,25 +431,6 @@ namespace SaleemCare.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Symptom");
-                });
-
-            modelBuilder.Entity("SaleemCare.Api.Domain.Entities.UserRole", b =>
-                {
-                    b.HasOne("SaleemCare.Api.Domain.Entities.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SaleemCare.Api.Domain.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("SaleemCare.Api.Domain.Entities.UserSymptomAnswer", b =>

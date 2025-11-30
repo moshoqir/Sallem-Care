@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SaleemCare.Api.Data;
+using SaleemCare.Api.Dtos.Auth;
 using SaleemCare.Api.Domain.Entities;
 using BCrypt.Net;
 using System.Threading.Tasks;
@@ -41,10 +42,13 @@ public class AuthController : ControllerBase
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password)
         };
 
+   
+
         _db.Users.Add(user);
         await _db.SaveChangesAsync();
 
-        var token = _tokens.Create(user);
+        var roles = await GetRoleNamesAsync(user.Id);
+        var token = _tokens.Create(user, roles);
 
         return StatusCode(201, new { token, user = new { user.Id, user.Name, user.Email } });
     }
@@ -58,11 +62,71 @@ public class AuthController : ControllerBase
         { return Unauthorized(new { error = new { message = "Invalid credentials." } });
         }
 
-        var token = _tokens.Create(user);
+        var roles = await GetRoleNamesAsync(user.Id);
+        var token = _tokens.Create(user, roles);
+
+       
         return Ok(new { token, user = new { user.Id, user.Name, user.Email } });
     }
 
-    
 
-   
+    [Authorize]
+    [HttpPost("change-password")]
+    public async Task<IActionResult> changePassword([FromBody] ChangePasswordDto dto)
+    {
+        if (string.IsNullOrWhiteSpace(dto.CurrentPassword) || string.IsNullOrWhiteSpace(dto.NewPassword))
+        {
+            return BadRequest(new { error = new { message = "Both currentPassword and new Password are required." } });
+        }
+
+        if (dto.NewPassword.Length < 8)
+            return BadRequest(new { error = new { message = "New password must be at least 8 characters." } });
+
+
+
+        var userId = User.GetUserId();
+
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user is null) return Unauthorized();
+
+        var ok = BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, user.PasswordHash);
+
+        if (!ok) return Unauthorized(new { error = new { message = "Current password is incorrect." } });
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.NewPassword);
+
+        await _db.SaveChangesAsync();
+
+        return Ok(new { message = "Password changed successfully." });
+
+
+    }
+
+    [Authorize]
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh()
+    {
+        var userId = User.GetUserId();
+
+        var user = await _db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user is null) return Unauthorized();
+
+        var roles = await GetRoleNamesAsync(user.Id);
+        var token = _tokens.Create(user, roles);
+        return Ok(new { token });
+    }
+
+
+    private async Task<List<string>> GetRoleNamesAsync(Guid userId)
+    {
+        return await _db.UserRoles
+            .Where(ur => ur.UserId == userId)
+            .Select(ur => ur.Role!.Name)
+            .ToListAsync();
+    }
+
+
+
 }

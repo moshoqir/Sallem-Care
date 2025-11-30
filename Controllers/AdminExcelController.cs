@@ -61,4 +61,41 @@ public class AdminExcelController : ControllerBase
         });
 
     }
+
+
+
+    /// <summary>
+    /// Uploads an Excel file and IMPORTS its contents into the database
+    /// (Conditions + SymptomConditionMap). Returns summary + errors.
+    /// </summary>
+    /// 
+    [HttpPost("commit")]
+    [RequestSizeLimit(10*1024*1024)]
+    public async Task<IActionResult> Commit([FromForm] IFormFile file, CancellationToken ct)
+    {
+        if (file is null || file.Length == 0) return BadRequest(new { error = "No file uploaded." });
+
+        var ext = Path.GetExtension(file.FileName).ToLowerInvariant();
+        if (ext != ".xlsx")
+        {
+            return BadRequest(new { error = "Only .xlsx files are supported." });
+        }
+
+        var userId = User.GetUserId();
+
+        await using var stream = file.OpenReadStream();
+
+        var result = await _excel.ImportAsync(stream, file.FileName, userId, ct);
+
+        return Ok(new
+        {
+            result.FileName,
+            result.Errors,
+            result.ConditionsInserted,
+            result.ConditionsUpdated,
+            result.LinksInserted,
+            result.LinksUpdated,
+            result.TotalRowsImported
+        });
+    }
 }

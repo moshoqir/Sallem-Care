@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 using System.IO;
 using System;
 using System.Threading;
+using SaleemCare.Api.Domain.Entities;
+using SaleemCare.Api.Data;
+using Microsoft.EntityFrameworkCore;
+
 
 
 
@@ -35,6 +39,17 @@ public class SymptomConditionPreview
     public int Relevance { get; set; }
 }
 
+public class ExcelCommitResult
+{
+    public string FileName { get; set; } = null!;
+    public List<string> Errors { get; set; } = new();
+    public int ConditionsInserted { get; set; } 
+    public int ConditionsUpdated { get; set; }
+    public int LinksInserted { get; set; }
+    public int LinksUpdated { get; set; }
+    public int TotalRowsImported => ConditionsInserted + ConditionsUpdated + LinksInserted + LinksUpdated;
+}
+
 /// <summary>
 /// Reads Excel files and returns a preview of Conditions + SymptomCondition mappings.
 /// Expected structure:
@@ -54,7 +69,17 @@ public class SymptomConditionPreview
 /// 
 
 public class ExcelImportService
+
+
 {
+
+    private readonly AppDbContext _db;
+
+    public ExcelImportService(AppDbContext db)
+    {
+        _db = db;
+    }
+
     public async Task<ExcelPreviewResult> PreviewAsync(Stream fileStream, string fileName, Guid importedBy, CancellationToken ct = default)
     {
         // importedBy will, for now, be used for commit and history
@@ -183,5 +208,135 @@ public class ExcelImportService
             row++;
 
         }
+    }
+
+    // Commit - Import
+
+    public async Task<ExcelCommitResult> ImportAsync(Stream fileStream, string fileName, Guid importedBy, CancellationToken ct=default)
+    {
+        var commit = new ExcelCommitResult
+        {
+            FileName = fileName
+        };
+
+
+        // reuse Preview logic
+        var preview = await PreviewAsync(fileStream, fileName, importedBy, ct);
+
+        if (preview.Errors.Any())
+        {
+            // if there are structural errors, don't touch db
+            commit.Errors.AddRange(preview.Errors);
+            return commit;
+        }
+
+        // Upsert Conditions by Slug
+
+        var existingConditions = await _db.Conditions
+              .ToDictionaryAsync(c => c.Slug, ct);
+
+        foreach (var existingCondition in preview.Conditions)
+        {
+            if (existingConditions.TryGetValue(existingCondition.Slug, out var entity))
+            {
+                // update
+
+                entity.NameAr = existingCondition.NameAr;
+                entity.NameEn = existingCondition.NameEn;
+                entity.DescriptionAr = existingCondition.DescriptionAr;
+                entity.DescriptionEn = existingCondition.DescriptionEn;
+                entity.SeverityLevel = existingCondition.SeverityLevel;
+
+                commit.ConditionsUpdated++;
+            }
+
+            else
+            {
+                // insert
+
+                var newCond = new Condition
+                {
+                    Slug = existingCondition.Slug,
+                    NameAr = existingCondition.NameAr,
+                    NameEn = existingCondition.NameEn,
+                    DescriptionAr = existingCondition.DescriptionAr,
+                    DescriptionEn = existingCondition.DescriptionEn,
+                    SeverityLevel = existingCondition.SeverityLevel,
+
+                };
+
+                _db.Conditions.Add(newCond);
+                existingConditions[existingCondition.Slug] = newCond;
+                commit.ConditionsUpdated++;
+            }
+        }
+        await _db.SaveChangesAsync(ct);
+
+        // map symptoms slugs and exosting links
+        var symptomsBySlug = await _db.Symptoms
+            .ToDictionaryAsync(s => s.Slug, ct);
+
+        var existingLinks = await _db.SymptomConditionMap
+            .ToListAsync(ct);
+
+        var linkDict = existingLinks
+            .ToDictionary(x => (x.SymptomId, x.ConditionId));
+
+        foreach (var symptomCondition in preview.SymptomConditions)
+        {
+            if (!symptomsBySlug.TryGetValue(symptomCondition.SymptomSlug, out var symptom))
+            {
+                commit.Errors.Add($"Import: Symptom slug '{symptomCondition.SymptomSlug}' not found in database.");
+                continue;
+            }
+
+            if (!existingConditions.TryGetValue(symptomCondition.ConditionSlug, out var condition))
+            {
+                commit.Errors.Add($"Import: Condition slug '{symptomCondition.ConditionSlug}' not found (check Conditions sheet).");
+                continue;
+            }
+
+            var key = (symptom.Id, condition.Id);
+
+            if (linkDict.TryGetValue(key, out var link))
+            {
+                link.Relevance = symptomCondition.Relevance;
+                commit.LinksUpdated++;
+            }
+
+            else
+            {
+                var newLink = new SymptomConditionMap
+                {
+                    SymptomId = symptom.Id,
+                    ConditionId = condition.Id,
+                    Relevance = symptomCondition.Relevance,
+                };
+
+                _db.SymptomConditionMap.Add(newLink);
+                linkDict[key] = newLink;
+                commit.LinksInserted++;
+            }
+        }
+
+        await _db.SaveChangesAsync(ct);
+
+
+
+        // 3) Log Excel import
+        var log = new ExcelImport
+        {
+            FileName = fileName,
+            ImportedBy = importedBy,
+            ImportedAt = DateTime.UtcNow,
+            RowsImported = commit.TotalRowsImported
+        };
+        _db.ExcelImports.Add(log);
+        await _db.SaveChangesAsync(ct);
+
+        return commit;
+
+
+
     }
 }

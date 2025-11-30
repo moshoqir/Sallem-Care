@@ -3,5 +3,5 @@ using System;
 
 public interface ITokenService
 {
-    string Create(User user, TimeSpan? lifetime = null);
+    string Create(User user, IEnumerable<string> roles, TimeSpan? lifetime = null);
 }

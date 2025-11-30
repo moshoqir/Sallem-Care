@@ -1,1 +1,12 @@
+# Visual Studio
 .vs/
+*.user
+*.suo
+
+# Build outputs
+bin/
+obj/
+
+# Others
+*.log
+*.sqlite

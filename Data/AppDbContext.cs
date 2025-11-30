@@ -14,6 +14,10 @@ public class AppDbContext : DbContext
     public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
     public DbSet<UserSymptomAnswer> UserSymptomAnswers => Set<UserSymptomAnswer>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
+
+
     public DbSet<Encounter> Encounters => Set<Encounter>();
 
     public DbSet<Condition> Conditions => Set<Condition>();
@@ -46,6 +50,16 @@ public class AppDbContext : DbContext
              .OnDelete(DeleteBehavior.SetNull);
 
         });
+
+        b.Entity<Role>().HasIndex(r => r.Name).IsUnique();
+
+        b.Entity<UserRole>().HasKey(ur => new { ur.UserId, ur.RoleId });
+        b.Entity<UserRole>()
+            .HasOne(ur => ur.User).WithMany()
+            .HasForeignKey(ur => ur.UserId);
+        b.Entity<UserRole>()
+            .HasOne(ur => ur.Role).WithMany()
+            .HasForeignKey(ur => ur.RoleId);
 
         b.Entity<Condition>().HasIndex(x => x.Slug).IsUnique();
 
