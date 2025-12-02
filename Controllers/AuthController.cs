@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using SaleemCare.Api.Extensions;
+using Microsoft.Extensions.Configuration;
 using System;
 
 namespace SaleemCare.Api.Controllers;
@@ -20,9 +21,10 @@ public class AuthController : ControllerBase
 {
     private readonly AppDbContext _db;
     private readonly ITokenService _tokens;
+    private readonly IConfiguration _config;
 
-    public AuthController(AppDbContext db, ITokenService tokens)
-    { _db = db; _tokens = tokens; }
+    public AuthController(AppDbContext db, ITokenService tokens, IConfiguration config)
+    { _db = db; _tokens = tokens; _config = config; }
 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
@@ -45,6 +47,14 @@ public class AuthController : ControllerBase
    
 
         _db.Users.Add(user);
+        await _db.SaveChangesAsync();
+
+        var patientRole = await _db.Roles.FirstAsync(r => r.Name == "Patient");
+        _db.UserRoles.Add(new UserRole
+        {
+            UserId = user.Id,
+            RoleId = patientRole.Id
+        });
         await _db.SaveChangesAsync();
 
         var roles = await GetRoleNamesAsync(user.Id);
@@ -125,6 +135,56 @@ public class AuthController : ControllerBase
             .Where(ur => ur.UserId == userId)
             .Select(ur => ur.Role!.Name)
             .ToListAsync();
+    }
+
+    [HttpPost("guest")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Guest([FromBody]  GuestLoginRequest? dto)
+    {
+
+        // read time to delete the gues after the give time
+        var now = DateTime.UtcNow;
+
+        var lifetime = _config.GetValue<int?>("Guests:LifetimeHours") ?? 48;
+
+        // create fake email for this guest (email can't be null)
+        var pseudoEmail = $"guest_{Guid.NewGuid():N}@guest.local";
+
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Email = pseudoEmail,
+            Name = string.IsNullOrWhiteSpace(dto?.DisplayName) ? "Guest" : dto.DisplayName.Trim(),
+            IsGuest = true,
+            PasswordHash = string.Empty, 
+            CreatedAt = now,
+            GuestExpiresAt = now.AddHours(lifetime),
+        };
+
+        _db.Users.Add(user);
+        await _db.SaveChangesAsync();
+
+        var patientRole = await _db.Roles.FirstAsync(r => r.Name == "Patient");
+        _db.UserRoles.Add(new UserRole { UserId = user.Id, RoleId = patientRole.Id});
+
+        await _db.SaveChangesAsync();
+
+        // Issue token
+        var roles = await GetRoleNamesAsync(user.Id);
+        var token = _tokens.Create(user,roles);
+
+        return Ok(new
+        {
+            token,
+            user = new
+            {
+                user.Id,
+                user.Name,
+                user.Email,
+                user.IsGuest,
+                
+            }
+        });
     }
 
 

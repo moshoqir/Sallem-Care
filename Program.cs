@@ -8,6 +8,10 @@ using SaleemCare.Api.Data.Seed;
 using FluentValidation.AspNetCore;
 using SaleemCare.Api.Services;
 using SaleemCare.Api.Services.Excel;
+using SaleemCare.Api.Middleware;
+using SaleemCare.Api.Services.Background;
+
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,6 +43,9 @@ builder.Services.AddSingleton<GoogleAiService>();
 
 // Excel Service
 builder.Services.AddScoped<ExcelImportService>();
+
+// Background service
+builder.Services.AddHostedService<GuestCleanupService>();
 
 var jwt = builder.Configuration.GetSection("Jwt");
 
@@ -84,6 +91,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseCors("flutter");
 app.UseAuthentication();
+app.UseMiddleware<GuestExpirationMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();

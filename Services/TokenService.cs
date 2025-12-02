@@ -29,7 +29,10 @@ public class TokenService : ITokenService
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             // claim to represent Email
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim("name", user.Name)
+            new Claim("name", user.Name),
+
+            // user guest
+            new Claim("isGuest", user.IsGuest ? "true" : "false"),
         };
 
         claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
