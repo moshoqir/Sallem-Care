@@ -12,10 +12,13 @@ public class GuestCleanupService : BackgroundService
 
     private readonly IConfiguration _config;
 
-    public GuestCleanupService(IServiceScopeFactory scopeFactory, IConfiguration config)
+    private readonly ILogger<GuestCleanupService> _logger;
+
+    public GuestCleanupService(IServiceScopeFactory scopeFactory, IConfiguration config, ILogger<GuestCleanupService> logger)
     {
         _scopeFactory = scopeFactory;
         _config = config;
+        _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -26,7 +29,12 @@ public class GuestCleanupService : BackgroundService
             {
                 await CleanupExpiredGuests(stoppingToken);
             }
-            catch { }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while running guest cleanup.");
+            }
 
             var intervalMinutes = _config.GetValue<int?>("Guests:CleanUpIntervalMinutes") ?? 60;
             await Task.Delay(TimeSpan.FromMinutes(intervalMinutes), stoppingToken);
