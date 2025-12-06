@@ -6,7 +6,8 @@ using SaleemCare.Api.Data;
 
 namespace SaleemCare.Api.Services.Background;
 
-public class GuestCleanupService : BackgroundService
+public class GuestCleanupService
+    : BackgroundService
 {
     private readonly IServiceScopeFactory _scopeFactory;
 

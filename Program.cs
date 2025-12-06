@@ -10,6 +10,9 @@ using SaleemCare.Api.Services;
 using SaleemCare.Api.Services.Excel;
 using SaleemCare.Api.Middleware;
 using SaleemCare.Api.Services.Background;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
+
 
 
 
@@ -72,6 +75,36 @@ builder.Services.AddCors(opt =>
     opt.AddPolicy("flutter", p => p.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 });
 
+
+
+// rate limiter for guest users
+builder.Services.AddRateLimiter(options =>
+{
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        context.HttpContext.Response.ContentType = "application/json";
+
+        await context.HttpContext.Response.WriteAsync(
+            "{\"error\":\"Too many guest login attempts. Please wait and try again.\"}", token
+            );
+    };
+
+    options.AddPolicy("GuestAuthPolicy", HttpContext =>
+    {
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        return RateLimitPartition.GetFixedWindowLimiter(ip, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 5,
+            Window = TimeSpan.FromMinutes(1),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+    });
+});
+
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -92,6 +125,7 @@ using (var scope = app.Services.CreateScope())
 app.UseCors("flutter");
 app.UseAuthentication();
 app.UseMiddleware<GuestExpirationMiddleware>();
+app.UseRateLimiter();
 app.UseAuthorization();
 
 app.MapControllers();

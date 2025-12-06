@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using SaleemCare.Api.Extensions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.RateLimiting;
 using System;
 
 namespace SaleemCare.Api.Controllers;
@@ -139,6 +140,7 @@ public class AuthController : ControllerBase
 
     [HttpPost("guest")]
     [AllowAnonymous]
+    [EnableRateLimiting("GuestAuthPolicy")]
     public async Task<IActionResult> Guest([FromBody]  GuestLoginRequest? dto)
     {
 
@@ -188,5 +190,75 @@ public class AuthController : ControllerBase
     }
 
 
+    // add guust as normal user
+    [HttpPost("upgrade")]
+    [Authorize]
+    public async Task<IActionResult> UpgradeGuest([FromBody] GuestUpgradeRequest dto)
+    {
+        var userId = User.GetUserId();
 
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user is null)
+        {
+            return Unauthorized(new { error = "User not found." });
+        }
+
+        if (!user.IsGuest)
+        {
+            return BadRequest(new { error = "Only guest accounts can be upgraded." });
+        }
+
+        // validation
+        if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Password))
+        {
+            return BadRequest(new { error = "Email and password are required." });
+        }
+
+        if (!string.IsNullOrEmpty(dto.ConfirmPassword) && !string.Equals(dto.Password,dto.ConfirmPassword))
+        {
+            return BadRequest(new { error = "Passwords do not match." });
+        }
+
+        // check if email already exists
+        var emailReq = dto.Email.Trim().ToLowerInvariant();
+
+        var emailUsed = await _db.Users.AnyAsync(u => u.Email.ToLower() == emailReq && u.Id != userId);
+
+        if (emailUsed)
+        {
+            return BadRequest(new { error = "This email is already in use." });
+        }
+
+        // hash password
+        var PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+
+        // upgred the guest into real user
+        user.Email = dto.Email.Trim();
+        user.PasswordHash = PasswordHash;
+        user.Name = string.IsNullOrWhiteSpace(dto.FullName) ? user.Name : dto.FullName.Trim();
+        user.IsGuest = false;
+        user.GuestExpiresAt = null;
+
+        await _db.SaveChangesAsync();
+
+        var roles = await GetRoleNamesAsync(user.Id);
+        var token = _tokens.Create(user, roles);
+
+
+        return Ok(new
+        {
+            token,
+            user = new
+            {
+                user.Id,
+                user.Name,
+                user.Email,
+                user.IsGuest,
+                user.CreatedAt,
+                user.GuestExpiresAt
+            }
+        });
+
+    }
 }
