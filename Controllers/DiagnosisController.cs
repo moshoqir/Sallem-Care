@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SaleemCare.Api.Data;
 using SaleemCare.Api.Dtos.Diagnosis;
 using SaleemCare.Api.Extensions;
+using Microsoft.AspNetCore.RateLimiting;
 namespace SaleemCare.Api.Controllers;
 
 
@@ -25,6 +26,7 @@ public class DiagnosisController : ControllerBase
     ==> based on the given symptoms that have answers in that encounter
      */
     [HttpGet("{encounterId:Guid}/diagnosis")]
+    [EnableRateLimiting("DiagnosisPolicy")]
     public async Task<IActionResult> Suggest(Guid encounterId, CancellationToken ct)
     {
         var userId = User.GetUserId();

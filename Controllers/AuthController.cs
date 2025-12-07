@@ -28,6 +28,8 @@ public class AuthController : ControllerBase
     { _db = db; _tokens = tokens; _config = config; }
 
     [HttpPost("register")]
+    [AllowAnonymous]
+    [EnableRateLimiting("AuthRegisterPolicy")]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
         if (string.IsNullOrWhiteSpace(dto.Email) || string.IsNullOrWhiteSpace(dto.Password))
@@ -65,6 +67,8 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
+    [AllowAnonymous]
+    [EnableRateLimiting("AuthLoginPolicy")]
     public async Task<IActionResult> login([FromBody] LoginDto dto)
     {
         var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
@@ -83,6 +87,7 @@ public class AuthController : ControllerBase
 
     [Authorize]
     [HttpPost("change-password")]
+    [EnableRateLimiting("AuthChangePasswordPolicy")]
     public async Task<IActionResult> changePassword([FromBody] ChangePasswordDto dto)
     {
         if (string.IsNullOrWhiteSpace(dto.CurrentPassword) || string.IsNullOrWhiteSpace(dto.NewPassword))
@@ -193,6 +198,7 @@ public class AuthController : ControllerBase
     // add guust as normal user
     [HttpPost("upgrade")]
     [Authorize]
+    [EnableRateLimiting("AuthChangePasswordPolicy")]
     public async Task<IActionResult> UpgradeGuest([FromBody] GuestUpgradeRequest dto)
     {
         var userId = User.GetUserId();

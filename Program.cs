@@ -12,6 +12,8 @@ using SaleemCare.Api.Middleware;
 using SaleemCare.Api.Services.Background;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
+using SaleemCare.Api.Domain.Entities;
+using System.Security.Claims;
 
 
 
@@ -90,6 +92,23 @@ builder.Services.AddRateLimiter(options =>
             );
     };
 
+    static string GetUserKey(HttpContext httpContext)
+    {
+        var userId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? httpContext.User.FindFirstValue("sub");
+
+        if (!string.IsNullOrEmpty(userId))
+        {
+            return $"user: {userId}";
+        }
+
+        var ip = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        return $"ip : {ip}";
+    }
+
+
+    // for guest
     options.AddPolicy("GuestAuthPolicy", HttpContext =>
     {
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
@@ -101,6 +120,93 @@ builder.Services.AddRateLimiter(options =>
             QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
             QueueLimit = 0
         });
+    });
+
+
+
+    // for auth login
+    options.AddPolicy("AuthLoginPolicy", httpContext =>
+    {
+        var ip = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        return RateLimitPartition.GetFixedWindowLimiter(ip, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 10,
+            Window = TimeSpan.FromMinutes(5),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+    });
+
+    // for register
+    options.AddPolicy("AuthRegisterPolicy", httpContext =>
+    {
+        var ip = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        return RateLimitPartition.GetFixedWindowLimiter(ip, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 3,
+            Window = TimeSpan.FromHours(1),
+            QueueProcessingOrder =  QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+    });
+
+    // for change password
+    options.AddPolicy("AuthChangePasswordPolicy", httpContext =>
+    {
+        var key = GetUserKey(httpContext);
+
+        return RateLimitPartition.GetFixedWindowLimiter(key, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 3, 
+            Window = TimeSpan.FromMinutes(10),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+    });
+
+    // for AI chatbot
+    options.AddPolicy("ChatbotPolicy", httpContext =>
+    {
+        var key = GetUserKey(httpContext);
+
+        return RateLimitPartition.GetFixedWindowLimiter(key, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 20,
+            Window = TimeSpan.FromMinutes(1),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+    });
+
+    // AI diagnosis
+    options.AddPolicy("DiagnosisPolicy", httpContext =>
+    {
+        var key = GetUserKey(httpContext);
+
+        return RateLimitPartition.GetFixedWindowLimiter(key, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 30,
+            Window = TimeSpan.FromHours(1),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+    });
+
+    // Admin : Excel managament
+    options.AddPolicy("AdminExcelPolicy", httpContext =>
+    {
+        var key = GetUserKey(httpContext);
+
+        return RateLimitPartition.GetFixedWindowLimiter(key, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 5,
+            Window = TimeSpan.FromMinutes(10),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+
     });
 });
 

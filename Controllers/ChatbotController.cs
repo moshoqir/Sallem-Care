@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SaleemCare.Api.Services;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.RateLimiting;
 
 
 namespace SaleemCare.Api.Controllers;
@@ -18,6 +19,7 @@ public class ChatbotController : ControllerBase
     public record ChatRequest(string Message);
 
     [HttpPost("ask")]
+    [EnableRateLimiting("ChatbotPolicy")]
     public async Task<IActionResult> Message([FromBody] ChatRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Message))

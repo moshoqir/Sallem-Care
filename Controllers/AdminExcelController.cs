@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using SaleemCare.Api.Extensions;
 using System.IO;
 namespace SaleemCare.Api.Controllers;
@@ -27,6 +28,7 @@ public class AdminExcelController : ControllerBase
     /// 
 
     [HttpPost("upload")]
+    [EnableRateLimiting("AdminExcelPolicy")]
     [RequestSizeLimit(10 * 1024 * 1024)] // 10 MB
     public async Task<IActionResult> Upload([FromForm] IFormFile file, CancellationToken ct)
     {
@@ -70,6 +72,7 @@ public class AdminExcelController : ControllerBase
     /// </summary>
     /// 
     [HttpPost("commit")]
+    [EnableRateLimiting("AdminExcelPolicy")]
     [RequestSizeLimit(10*1024*1024)]
     public async Task<IActionResult> Commit([FromForm] IFormFile file, CancellationToken ct)
     {
