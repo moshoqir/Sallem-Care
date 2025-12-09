@@ -45,10 +45,11 @@ public static class DbInitializer
             questionAr: "هل الغثيان مرتبط بتناول الطعام؟",
             optionsAr: new[] { "قبل الأكل", "بعد الأكل", "لا علاقة" });
 
+
         if (!await db.Roles.AnyAsync())
         {
             db.Roles.AddRange(
-                new Role { Name = "Admin"},
+                new Role { Name = "Admin" },
                 new Role { Name = "Clinician" },
                 new Role { Name = "Patient" }
 
@@ -119,4 +120,6 @@ public static class DbInitializer
         }
 
     }
+
+  
 }

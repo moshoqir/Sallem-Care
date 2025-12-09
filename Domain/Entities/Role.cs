@@ -1,5 +1,3 @@
-using System;
-
 namespace SaleemCare.Api.Domain.Entities;
 
 public class Role

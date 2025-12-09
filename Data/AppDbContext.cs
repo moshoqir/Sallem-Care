@@ -14,9 +14,18 @@ public class AppDbContext : DbContext
     public DbSet<UserProfile> UserProfiles => Set<UserProfile>();
     public DbSet<UserSymptomAnswer> UserSymptomAnswers => Set<UserSymptomAnswer>();
     public DbSet<User> Users => Set<User>();
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
+
+
     public DbSet<Encounter> Encounters => Set<Encounter>();
     public DbSet<Role> Roles => Set<Role>();
     public DbSet<UserRole> UserRoles => Set<UserRole>();
+
+    public DbSet<Condition> Conditions => Set<Condition>();
+    public DbSet<SymptomConditionMap> SymptomConditionMap => Set<SymptomConditionMap>();
+    public DbSet<ConditionRule> ConditionRules => Set<ConditionRule>();
+    public DbSet<ExcelImport> ExcelImports => Set<ExcelImport>();
 
 
 
@@ -47,13 +56,31 @@ public class AppDbContext : DbContext
         b.Entity<Role>().HasIndex(r => r.Name).IsUnique();
 
         b.Entity<UserRole>().HasKey(ur => new { ur.UserId, ur.RoleId });
-
         b.Entity<UserRole>()
             .HasOne(ur => ur.User).WithMany()
             .HasForeignKey(ur => ur.UserId);
         b.Entity<UserRole>()
             .HasOne(ur => ur.Role).WithMany()
             .HasForeignKey(ur => ur.RoleId);
+
+        b.Entity<Condition>().HasIndex(x => x.Slug).IsUnique();
+
+        b.Entity<SymptomConditionMap>()
+            .HasOne(x => x.Symptom)
+            .WithMany()
+            .HasForeignKey(x => x.SymptomId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        b.Entity<SymptomConditionMap>()
+            .HasOne(x => x.Condition)
+            .WithMany()
+            .HasForeignKey(x => x.ConditionId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        b.Entity<SymptomConditionMap>()
+        .HasIndex(m => new { m.SymptomId, m.ConditionId })
+        .IsUnique();
+
 
         base.OnModelCreating(b);
 

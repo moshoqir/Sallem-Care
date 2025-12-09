@@ -17,10 +17,71 @@ namespace SaleemCare.Api.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "9.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("SaleemCare.Api.Domain.Entities.Condition", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DescriptionAr")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DescriptionEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameAr")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NameEn")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SeverityLevel")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("Conditions");
+                });
+
+            modelBuilder.Entity("SaleemCare.Api.Domain.Entities.ConditionRule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ConditionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RuleText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ScoreBonus")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConditionId");
+
+                    b.ToTable("ConditionRules");
+                });
 
             modelBuilder.Entity("SaleemCare.Api.Domain.Entities.Encounter", b =>
                 {
@@ -45,6 +106,32 @@ namespace SaleemCare.Api.Migrations
                     b.HasIndex("UserId", "StartedAt");
 
                     b.ToTable("Encounters");
+                });
+
+            modelBuilder.Entity("SaleemCare.Api.Domain.Entities.ExcelImport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ImportedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ImportedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("RowsImported")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ExcelImports");
                 });
 
             modelBuilder.Entity("SaleemCare.Api.Domain.Entities.Region", b =>
@@ -142,6 +229,33 @@ namespace SaleemCare.Api.Migrations
                     b.ToTable("Symptoms");
                 });
 
+            modelBuilder.Entity("SaleemCare.Api.Domain.Entities.SymptomConditionMap", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ConditionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Relevance")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SymptomId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConditionId");
+
+                    b.HasIndex("SymptomId", "ConditionId")
+                        .IsUnique();
+
+                    b.ToTable("SymptomConditionMap");
+                });
+
             modelBuilder.Entity("SaleemCare.Api.Domain.Entities.SymptomQuestion", b =>
                 {
                     b.Property<int>("Id")
@@ -186,6 +300,12 @@ namespace SaleemCare.Api.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("GuestExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsGuest")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -291,6 +411,17 @@ namespace SaleemCare.Api.Migrations
                     b.ToTable("UserSymptomAnswers");
                 });
 
+            modelBuilder.Entity("SaleemCare.Api.Domain.Entities.ConditionRule", b =>
+                {
+                    b.HasOne("SaleemCare.Api.Domain.Entities.Condition", "Condition")
+                        .WithMany()
+                        .HasForeignKey("ConditionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Condition");
+                });
+
             modelBuilder.Entity("SaleemCare.Api.Domain.Entities.RegionSymptom", b =>
                 {
                     b.HasOne("SaleemCare.Api.Domain.Entities.Region", "Region")
@@ -306,6 +437,25 @@ namespace SaleemCare.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Region");
+
+                    b.Navigation("Symptom");
+                });
+
+            modelBuilder.Entity("SaleemCare.Api.Domain.Entities.SymptomConditionMap", b =>
+                {
+                    b.HasOne("SaleemCare.Api.Domain.Entities.Condition", "Condition")
+                        .WithMany()
+                        .HasForeignKey("ConditionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SaleemCare.Api.Domain.Entities.Symptom", "Symptom")
+                        .WithMany()
+                        .HasForeignKey("SymptomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Condition");
 
                     b.Navigation("Symptom");
                 });

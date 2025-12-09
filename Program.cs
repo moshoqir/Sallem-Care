@@ -7,6 +7,17 @@ using SaleemCare.Api.Data;
 using SaleemCare.Api.Data.Seed;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using SaleemCare.Api.Services;
+using SaleemCare.Api.Services.Excel;
+using SaleemCare.Api.Middleware;
+using SaleemCare.Api.Services.Background;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
+using SaleemCare.Api.Domain.Entities;
+using System.Security.Claims;
+
+
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +43,16 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 
+// AI servicse
+builder.Services.AddHttpClient();
+builder.Services.AddSingleton<GoogleAiService>();
+
+// Excel Service
+builder.Services.AddScoped<ExcelImportService>();
+
+// Background service
+builder.Services.AddHostedService<GuestCleanupService>();
+
 var jwt = builder.Configuration.GetSection("Jwt");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -56,6 +77,140 @@ builder.Services.AddCors(opt =>
 {
     opt.AddPolicy("flutter", p => p.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 });
+
+
+
+// rate limiter for guest users
+builder.Services.AddRateLimiter(options =>
+{
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        context.HttpContext.Response.ContentType = "application/json";
+
+        await context.HttpContext.Response.WriteAsync(
+            "{\"error\":\"Too many guest login attempts. Please wait and try again.\"}", token
+            );
+    };
+
+    static string GetUserKey(HttpContext httpContext)
+    {
+        var userId = httpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)
+            ?? httpContext.User.FindFirstValue("sub");
+
+        if (!string.IsNullOrEmpty(userId))
+        {
+            return $"user: {userId}";
+        }
+
+        var ip = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        return $"ip : {ip}";
+    }
+
+
+    // for guest
+    options.AddPolicy("GuestAuthPolicy", HttpContext =>
+    {
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        return RateLimitPartition.GetFixedWindowLimiter(ip, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 5,
+            Window = TimeSpan.FromMinutes(1),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+    });
+
+
+
+    // for auth login
+    options.AddPolicy("AuthLoginPolicy", httpContext =>
+    {
+        var ip = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        return RateLimitPartition.GetFixedWindowLimiter(ip, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 10,
+            Window = TimeSpan.FromMinutes(5),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+    });
+
+    // for register
+    options.AddPolicy("AuthRegisterPolicy", httpContext =>
+    {
+        var ip = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        return RateLimitPartition.GetFixedWindowLimiter(ip, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 3,
+            Window = TimeSpan.FromHours(1),
+            QueueProcessingOrder =  QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+    });
+
+    // for change password
+    options.AddPolicy("AuthChangePasswordPolicy", httpContext =>
+    {
+        var key = GetUserKey(httpContext);
+
+        return RateLimitPartition.GetFixedWindowLimiter(key, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 3, 
+            Window = TimeSpan.FromMinutes(10),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+    });
+
+    // for AI chatbot
+    options.AddPolicy("ChatbotPolicy", httpContext =>
+    {
+        var key = GetUserKey(httpContext);
+
+        return RateLimitPartition.GetFixedWindowLimiter(key, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 20,
+            Window = TimeSpan.FromMinutes(1),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+    });
+
+    // AI diagnosis
+    options.AddPolicy("DiagnosisPolicy", httpContext =>
+    {
+        var key = GetUserKey(httpContext);
+
+        return RateLimitPartition.GetFixedWindowLimiter(key, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 30,
+            Window = TimeSpan.FromHours(1),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+    });
+
+    // Admin : Excel managament
+    options.AddPolicy("AdminExcelPolicy", httpContext =>
+    {
+        var key = GetUserKey(httpContext);
+
+        return RateLimitPartition.GetFixedWindowLimiter(key, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 5,
+            Window = TimeSpan.FromMinutes(10),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
+
+    });
+});
+
 
 var app = builder.Build();
 
@@ -89,6 +244,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("flutter");
 app.UseAuthentication();
+app.UseMiddleware<GuestExpirationMiddleware>();
+app.UseRateLimiter();
 app.UseAuthorization();
 
 app.MapControllers();
