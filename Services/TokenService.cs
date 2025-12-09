@@ -4,6 +4,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using SaleemCare.Api.Domain.Entities;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 public class TokenService : ITokenService
 {
@@ -23,6 +25,7 @@ public class TokenService : ITokenService
 
 
         // Claim is to help APIs to understand who the user is by their info (userId, Email, Name, etc.)
+        var claims = new List<Claim>
         var claims = new List<Claim>
         {
             // claim to represent userId

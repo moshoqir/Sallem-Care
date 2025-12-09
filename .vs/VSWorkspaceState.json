@@ -1,0 +1,14 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Controllers",
+    "\\Data",
+    "\\Data\\Seed",
+    "\\Dtos\\Auth",
+    "\\Mapping",
+    "\\Services",
+    "\\Validation"
+  ],
+  "SelectedNode": "\\Controllers\\TestRolesController.cs",
+  "PreviewInSolutionExplorer": false
+}

@@ -12,6 +12,8 @@ using SaleemCare.Api.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.RateLimiting;
 using System;
+using SaleemCare.Api.Dtos.Auth;
+using System.Collections.Generic;
 
 namespace SaleemCare.Api.Controllers;
 

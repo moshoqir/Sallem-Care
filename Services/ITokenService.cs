@@ -1,5 +1,6 @@
 using SaleemCare.Api.Domain.Entities;
 using System;
+using System.Collections.Generic;
 
 public interface ITokenService
 {

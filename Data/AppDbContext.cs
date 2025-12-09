@@ -19,6 +19,8 @@ public class AppDbContext : DbContext
 
 
     public DbSet<Encounter> Encounters => Set<Encounter>();
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<UserRole> UserRoles => Set<UserRole>();
 
     public DbSet<Condition> Conditions => Set<Condition>();
     public DbSet<SymptomConditionMap> SymptomConditionMap => Set<SymptomConditionMap>();

@@ -80,4 +80,41 @@ public class ProfileController: ControllerBase
 
         return StatusCode(201, new { message = "Saved", profileId = entity.Id });
     }
+
+    [Authorize]
+    [HttpPatch]
+    public async Task<IActionResult> Patch([FromBody] UpdateProfileDto dto)
+    {
+        var userId = User.GetUserId();
+
+        var profile = await _db.UserProfiles.FirstOrDefaultAsync(p => p.UserId == userId);
+
+        if (profile is null)
+        {
+            profile = new UserProfile { UserId = userId };
+
+            _db.UserProfiles.Add(profile);
+        }
+
+        if (dto.Gender is not null) profile.Gender = dto.Gender;
+
+        if (dto.HasDiabetes.HasValue) profile.HasDiabetes = dto.HasDiabetes.Value;
+
+        if (dto.HasHypertension.HasValue) profile.HasHypertension = dto.HasHypertension.Value;
+
+        if (dto.IsAthlete.HasValue) profile.IsAthlete = dto.IsAthlete.Value;
+
+        if (dto.Dob.HasValue) profile.Dob = dto.Dob;
+
+
+        if (dto.SurgicalHistory != null)
+        {
+            profile.SurgicalHistoryJson = dto.SurgicalHistory.Count ==0
+                ?"[]": System.Text.Json.JsonSerializer.Serialize(dto.SurgicalHistory);
+        }
+
+        await _db.SaveChangesAsync();
+        return Ok(new { message = "Profile updated." });
+
+    }
 }
