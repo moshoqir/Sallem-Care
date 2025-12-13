@@ -52,6 +52,9 @@ builder.Services.AddScoped<ExcelImportService>();
 // Background service
 builder.Services.AddHostedService<GuestCleanupService>();
 
+// voice transcription service
+builder.Services.AddScoped<IVoiceTranscriptionService, FakeVoiceTranscriptionService>();
+
 var jwt = builder.Configuration.GetSection("Jwt");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -207,6 +210,23 @@ builder.Services.AddRateLimiter(options =>
             QueueLimit = 0
         });
 
+    });
+
+
+    // for AI Voice
+    options.AddPolicy("VoicePolicy", httpContext =>
+    {
+        var key = GetUserKey(httpContext);
+
+        
+
+        return RateLimitPartition.GetFixedWindowLimiter(key, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 10,
+            Window = TimeSpan.FromMinutes(30),
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+            QueueLimit = 0
+        });
     });
 });
 
